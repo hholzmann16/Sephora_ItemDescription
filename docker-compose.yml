@@ -1,0 +1,35 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    container_name: "pg_container"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: sephora
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+
+  sephora:
+    image: "hholzmann16/sephora"
+    container_name: "sephora_container"
+    build:
+      context: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 4000:4000
+    environment:
+      HOSTNAME: localhost
+      DB_HOST: db
+      DB_NAME: sephora
+      DB_USER: postgres
+      DB_PASS: ""
+      DB_PORT: 5432
+    depends_on:
+      - db
+    links:
+      - db
+
+volumes:
+  db_data:
